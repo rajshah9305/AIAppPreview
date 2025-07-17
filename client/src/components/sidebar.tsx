@@ -5,12 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { Bot, Key, Sparkles, ArrowRight, Send, MessageCircle } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Bot, Key, Sparkles, ArrowRight, Send, MessageCircle, X } from 'lucide-react';
 
 interface SidebarProps {
   onGenerate: (prompt: string, apiKey: string) => void;
   isGenerating: boolean;
   onRefineChat: (message: string) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const promptExamples = [
@@ -29,11 +32,12 @@ const suggestedPrompts = [
   "A retro-style landing page with neon colors..."
 ];
 
-export function Sidebar({ onGenerate, isGenerating, onRefineChat }: SidebarProps) {
+export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true, onClose }: SidebarProps) {
   const [apiKey, setApiKey] = useLocalStorage('cerebras_api_key', '');
   const [prompt, setPrompt] = useState('');
   const [chatMessage, setChatMessage] = useState('');
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const handleGenerate = useCallback(() => {
     if (!apiKey.trim()) {
@@ -66,31 +70,61 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat }: SidebarProps
   });
 
   return (
-    <motion.div 
-      className="w-80 flex-shrink-0 glass-panel border-r border-white/10 flex flex-col"
-      initial={{ x: -320 }}
-      animate={{ x: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
+    <>
+      {/* Mobile overlay */}
+      {isMobile && isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      <motion.div 
+        className={`${
+          isMobile 
+            ? 'fixed inset-y-0 left-0 z-50 w-80 transform' 
+            : 'w-80 flex-shrink-0'
+        } glass-panel border-r border-white/10 flex flex-col`}
+        initial={isMobile ? { x: -320 } : { x: -320 }}
+        animate={isMobile ? { x: isOpen ? 0 : -320 } : { x: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
       {/* Header */}
       <motion.div 
-        className="p-6 border-b border-white/10"
+        className="p-4 sm:p-6 border-b border-white/10"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="flex items-center space-x-3 mb-6">
-          <motion.div 
-            className="w-10 h-10 bg-gradient-to-r from-primary to-orange-600 rounded-xl flex items-center justify-center"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Bot className="text-white text-lg" />
-          </motion.div>
-          <div>
-            <h1 className="text-xl font-bold">RAJAI</h1>
-            <p className="text-xs text-muted-foreground">AI Code Generation</p>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <motion.div 
+              className="w-10 h-10 bg-gradient-to-r from-primary to-orange-600 rounded-xl flex items-center justify-center"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Bot className="text-white text-lg" />
+            </motion.div>
+            <div>
+              <h1 className="text-xl font-bold">RAJAI</h1>
+              <p className="text-xs text-muted-foreground">AI Code Generation</p>
+            </div>
           </div>
+          
+          {/* Mobile close button */}
+          {isMobile && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="p-1 hover:bg-white/10"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
         </div>
 
         {/* API Key Input */}
@@ -112,7 +146,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat }: SidebarProps
 
       {/* Prompt Composer */}
       <motion.div 
-        className="flex-1 p-6 space-y-4"
+        className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -220,7 +254,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat }: SidebarProps
 
       {/* Chat Interface */}
       <motion.div 
-        className="border-t border-white/10 p-4"
+        className="border-t border-white/10 p-3 sm:p-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -248,6 +282,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat }: SidebarProps
           </Button>
         </div>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }

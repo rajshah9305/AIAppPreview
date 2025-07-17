@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PreviewCard } from './preview-card';
 import { CodeEditor } from './code-editor';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Download, 
   GitBranch, 
@@ -11,7 +12,9 @@ import {
   Zap,
   Settings,
   History,
-  Plus
+  Plus,
+  Menu,
+  X
 } from 'lucide-react';
 import type { CodeVariation } from '@/types';
 
@@ -20,19 +23,26 @@ interface MainContentProps {
   isGenerating: boolean;
   onExportZip?: () => void;
   onCreateGist?: () => void;
+  onToggleSidebar?: () => void;
 }
 
 export function MainContent({ 
   variations, 
   isGenerating, 
   onExportZip, 
-  onCreateGist 
+  onCreateGist,
+  onToggleSidebar 
 }: MainContentProps) {
   const [selectedVariation, setSelectedVariation] = useState<CodeVariation | undefined>();
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleVariationSelect = useCallback((variation: CodeVariation) => {
     setSelectedVariation(variation);
-  }, []);
+    if (isMobile) {
+      setShowCodeEditor(true);
+    }
+  }, [isMobile]);
 
   const completedVariations = variations.filter(v => v.status === 'completed' || v.code);
   const hasVariations = variations.length > 0;
@@ -41,16 +51,27 @@ export function MainContent({
     <div className="flex-1 flex flex-col">
       {/* Top Navigation */}
       <motion.div 
-        className="glass-panel border-b border-white/10 px-6 py-4"
+        className="glass-panel border-b border-white/10 px-4 sm:px-6 py-4"
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3 sm:space-x-6">
+            {/* Mobile menu button */}
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onToggleSidebar}
+                className="p-1 hover:bg-white/10"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            )}
             <div className="text-sm">
-              <span className="text-muted-foreground">Project:</span>
-              <span className="ml-2 font-medium">Untitled Generation</span>
+              <span className="text-muted-foreground hidden sm:inline">Project:</span>
+              <span className="ml-0 sm:ml-2 font-medium">Untitled Generation</span>
             </div>
             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <motion.div 
@@ -58,18 +79,21 @@ export function MainContent({
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-              <span>
+              <span className="hidden sm:inline">
                 {isGenerating 
                   ? `${completedVariations.length}/5 variations ready`
                   : `${completedVariations.length} variations ready`
                 }
               </span>
+              <span className="sm:hidden">
+                {completedVariations.length}/5
+              </span>
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Export Options */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Button
                 onClick={onExportZip}
                 disabled={completedVariations.length === 0}
@@ -77,8 +101,8 @@ export function MainContent({
                 variant="outline"
                 className="bg-white/5 border-white/10 hover:bg-white/10 magnetic-hover"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Export ZIP
+                <Download className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Export ZIP</span>
               </Button>
               <Button
                 onClick={onCreateGist}
@@ -87,8 +111,8 @@ export function MainContent({
                 variant="outline"
                 className="bg-white/5 border-white/10 hover:bg-white/10 magnetic-hover"
               >
-                <GitBranch className="h-4 w-4 mr-2" />
-                Create Gist
+                <GitBranch className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Create Gist</span>
               </Button>
             </div>
             
@@ -109,7 +133,7 @@ export function MainContent({
       {/* Main Content Area */}
       <div className="flex-1 flex">
         {/* Generated Variations Grid */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-4 sm:p-6">
           <AnimatePresence mode="wait">
             {!hasVariations && !isGenerating ? (
               <motion.div
@@ -159,7 +183,7 @@ export function MainContent({
 
                 {/* Regular variations grid (first 4) */}
                 {variations.length > 0 && (
-                  <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
                     {variations.slice(0, 4).map((variation, index) => (
                       <PreviewCard
                         key={variation.id}
@@ -198,28 +222,69 @@ export function MainContent({
           </AnimatePresence>
         </div>
 
-        {/* Code Editor Panel */}
-        <CodeEditor
-          variation={selectedVariation}
-          onRunPlayground={() => console.log('Run in playground')}
-          onCompare={() => console.log('Compare variations')}
-          onFork={() => console.log('Fork variation')}
-        />
+        {/* Code Editor Panel - Hidden on mobile, shown in modal */}
+        {!isMobile && (
+          <CodeEditor
+            variation={selectedVariation}
+            onRunPlayground={() => console.log('Run in playground')}
+            onCompare={() => console.log('Compare variations')}
+            onFork={() => console.log('Fork variation')}
+          />
+        )}
+        
+        {/* Mobile Code Editor Modal */}
+        {isMobile && showCodeEditor && selectedVariation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowCodeEditor(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-black border border-white/20 rounded-xl w-full max-w-lg h-[80vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                <h3 className="font-medium">Code Editor</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCodeEditor(false)}
+                  className="p-1 hover:bg-white/10"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <CodeEditor
+                  variation={selectedVariation}
+                  onRunPlayground={() => console.log('Run in playground')}
+                  onCompare={() => console.log('Compare variations')}
+                  onFork={() => console.log('Fork variation')}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
 
       {/* Floating Action Menu */}
       <motion.div 
-        className="fixed bottom-6 right-6 space-y-3 z-50"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 space-y-2 sm:space-y-3 z-40"
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1, duration: 0.5 }}
       >
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Button
-            size="lg"
-            className="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-orange-600 shadow-lg hover:shadow-xl magnetic-hover"
+            size={isMobile ? "default" : "lg"}
+            className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} rounded-full bg-gradient-to-r from-primary to-orange-600 shadow-lg hover:shadow-xl magnetic-hover`}
           >
-            <Plus className="h-5 w-5" />
+            <Plus className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
           </Button>
         </motion.div>
         
@@ -227,9 +292,9 @@ export function MainContent({
           <Button
             size="sm"
             variant="outline"
-            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 magnetic-hover"
+            className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 magnetic-hover`}
           >
-            <History className="h-4 w-4" />
+            <History className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </motion.div>
         
@@ -237,9 +302,9 @@ export function MainContent({
           <Button
             size="sm"
             variant="outline"
-            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 magnetic-hover"
+            className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 magnetic-hover`}
           >
-            <Settings className="h-4 w-4" />
+            <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </motion.div>
       </motion.div>

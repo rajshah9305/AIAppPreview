@@ -103,7 +103,7 @@ export function PreviewCard({
       onMouseLeave={() => setIsHovered(false)}
       style={{ transformStyle: 'preserve-3d' }}
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center space-x-2">
           <motion.div 
             className={`w-3 h-3 rounded-full ${styleColors[variation.style as keyof typeof styleColors] || 'bg-primary'}`}
@@ -118,11 +118,11 @@ export function PreviewCard({
             </Badge>
           )}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <Button
             size="sm"
             variant="ghost"
-            className="p-1 hover:bg-white/10"
+            className="p-0.5 sm:p-1 hover:bg-white/10"
             onClick={(e) => {
               e.stopPropagation();
               onExpand?.();
@@ -133,7 +133,7 @@ export function PreviewCard({
           <Button
             size="sm"
             variant="ghost"
-            className="p-1 hover:bg-white/10"
+            className="p-0.5 sm:p-1 hover:bg-white/10"
             onClick={(e) => {
               e.stopPropagation();
               onViewCode?.();
@@ -144,7 +144,7 @@ export function PreviewCard({
           <Button
             size="sm"
             variant="ghost"
-            className="p-1 hover:bg-white/10 text-primary"
+            className="p-0.5 sm:p-1 hover:bg-white/10 text-primary"
             onClick={(e) => {
               e.stopPropagation();
               onRefine?.();

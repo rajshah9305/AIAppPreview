@@ -50,17 +50,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   function broadcastGenerationUpdate(generationId: string, update: GenerationProgress) {
-    if (wss.readyState === WebSocket.OPEN) {
-      wss.clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({
-            type: 'generation_update',
-            generationId,
-            update
-          }));
-        }
-      });
-    }
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({
+          type: 'generation_update',
+          generationId,
+          update
+        }));
+      }
+    });
   }
 
   // Authentication routes
@@ -209,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!generation) return;
 
     // Process each variation
-    for (const [variationId, progress] of generation.variations) {
+    for (const [variationId, progress] of Array.from(generation.variations.entries())) {
       // Update status to generating
       const updatedProgress: GenerationProgress = {
         ...progress,

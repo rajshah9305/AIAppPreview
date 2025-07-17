@@ -15,6 +15,7 @@ export default function Home() {
   const [variations, setVariations] = useState<CodeVariation[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGenerationId, setCurrentGenerationId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [user] = useLocalStorage('rajai_user', null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -201,6 +202,8 @@ export default function Home() {
           onGenerate={handleGenerate}
           isGenerating={isGenerating}
           onRefineChat={handleRefineChat}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
         
         <MainContent
@@ -208,6 +211,7 @@ export default function Home() {
           isGenerating={isGenerating}
           onExportZip={handleExportZip}
           onCreateGist={handleCreateGist}
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         />
       </div>
 
