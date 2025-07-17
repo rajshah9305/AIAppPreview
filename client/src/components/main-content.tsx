@@ -303,6 +303,7 @@ export function MainContent({
           <Button
             size="sm"
             variant="outline"
+            onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
             className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-white/10 backdrop-blur border-white/20 hover:bg-white/20 magnetic-hover`}
           >
             <Settings className="h-3 w-3 sm:h-4 sm:w-4" />

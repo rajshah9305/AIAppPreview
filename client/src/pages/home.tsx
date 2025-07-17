@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Sidebar } from '@/components/sidebar';
 import { MainContent } from '@/components/main-content';
 import { ParticleBackground } from '@/components/particle-background';
+import { SettingsPanel } from '@/components/settings-panel';
 import { useWebSocket } from '@/hooks/use-websocket';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { generateWithCerebras } from '@/lib/cerebras';
@@ -16,6 +17,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentGenerationId, setCurrentGenerationId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [user] = useLocalStorage('rajai_user', null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -52,6 +54,13 @@ export default function Home() {
       
       return updated;
     });
+  }, []);
+
+  // Settings panel event listener
+  useEffect(() => {
+    const handleOpenSettings = () => setSettingsOpen(true);
+    window.addEventListener('open-settings', handleOpenSettings);
+    return () => window.removeEventListener('open-settings', handleOpenSettings);
   }, []);
 
   // Generation mutation
@@ -214,6 +223,12 @@ export default function Home() {
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         />
       </div>
+
+      {/* Settings Panel */}
+      <SettingsPanel 
+        isOpen={settingsOpen} 
+        onClose={() => setSettingsOpen(false)} 
+      />
 
       {/* WebSocket connection indicator */}
       {!isConnected && (

@@ -127,20 +127,27 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true,
           )}
         </div>
 
-        {/* API Key Input */}
+        {/* API Key Status */}
         <div className="space-y-3">
-          <label className="text-sm font-medium block">Cerebras API Key</label>
-          <div className="relative">
-            <Input
-              type="password"
-              placeholder="Enter your API key..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="bg-black/50 border-white/20 focus:border-primary pr-10"
-            />
-            <Key className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium block">API Status</label>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-settings'))}
+              className="text-xs hover:bg-white/10"
+            >
+              Configure
+            </Button>
           </div>
-          <p className="text-xs text-muted-foreground">Stored securely in your browser</p>
+          <div className="flex items-center space-x-2 p-3 bg-black/30 rounded-lg border border-white/10">
+            <div className={`w-2 h-2 rounded-full ${apiKey ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="text-sm">
+              {apiKey ? 'API Key configured' : 'No API key set'}
+            </span>
+            <Key className="h-3 w-3 text-muted-foreground ml-auto" />
+          </div>
+          <p className="text-xs text-muted-foreground">Configure your API key in Settings</p>
         </div>
       </motion.div>
 
