@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PreviewCard } from './preview-card';
 import { CodeEditor } from './code-editor';
+import { UserProfile } from './user-profile';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Download, 
@@ -116,16 +117,8 @@ export function MainContent({
               </Button>
             </div>
             
-            {/* User Menu */}
-            <div className="flex items-center space-x-3">
-              <motion.div 
-                className="w-8 h-8 bg-gradient-to-r from-primary to-orange-600 rounded-full flex items-center justify-center cursor-pointer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <User className="h-4 w-4 text-white" />
-              </motion.div>
-            </div>
+            {/* User Profile */}
+            <UserProfile />
           </div>
         </div>
       </motion.div>
