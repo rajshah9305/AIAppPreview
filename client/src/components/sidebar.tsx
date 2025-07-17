@@ -157,13 +157,15 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true,
           {/* Quick Examples */}
           <div className="flex flex-wrap gap-2 mb-3">
             {promptExamples.map((example, index) => (
-              <motion.div key={example}>
+              <motion.div 
+                key={example}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Badge
                   variant="outline"
                   className="cursor-pointer hover:bg-white/10 transition-colors magnetic-hover text-xs"
                   onClick={() => insertExample(example)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   {example}
                 </Badge>

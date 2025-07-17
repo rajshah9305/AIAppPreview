@@ -283,6 +283,7 @@ export function MainContent({
           <Button
             size={isMobile ? "default" : "lg"}
             className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} rounded-full bg-gradient-to-r from-primary to-orange-600 shadow-lg hover:shadow-xl magnetic-hover`}
+            onClick={onToggleSidebar}
           >
             <Plus className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
           </Button>

@@ -29,9 +29,12 @@ export function ParticleBackground() {
 
     const createParticles = () => {
       particles.current = [];
-      const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+      // Reduce particle count on mobile for better performance
+      const isMobile = window.innerWidth < 768;
+      const baseCount = isMobile ? 20000 : 15000;
+      const particleCount = Math.floor((canvas.width * canvas.height) / baseCount);
       
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < Math.min(particleCount, isMobile ? 50 : 100); i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -111,7 +114,7 @@ export function ParticleBackground() {
       {/* Additional floating particles for visual enhancement */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute inset-0 neural-network"></div>
-        {[...Array(8)].map((_, i) => (
+        {[...Array(window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
           <motion.div
             key={i}
             className="particle absolute rounded-full bg-primary"

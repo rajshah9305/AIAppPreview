@@ -15,10 +15,21 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   const reconnectTimeout = useRef<NodeJS.Timeout>();
 
   const connect = useCallback(() => {
+    // Don't connect if already connected
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      return;
+    }
+
+    // Clean up existing connection
+    if (ws.current) {
+      ws.current.close();
+    }
+
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
       
+      console.log('Connected to RAJAI WebSocket');
       ws.current = new WebSocket(wsUrl);
 
       ws.current.onopen = () => {
@@ -37,15 +48,19 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
         }
       };
 
-      ws.current.onclose = () => {
+      ws.current.onclose = (event) => {
         setIsConnected(false);
         options.onDisconnect?.();
-        console.log('WebSocket disconnected');
+        console.log('Disconnected from RAJAI WebSocket');
         
-        // Attempt to reconnect after 3 seconds
-        reconnectTimeout.current = setTimeout(() => {
-          connect();
-        }, 3000);
+        // Only reconnect if it wasn't a manual close
+        if (event.code !== 1000 && event.code !== 1001) {
+          reconnectTimeout.current = setTimeout(() => {
+            if (ws.current?.readyState !== WebSocket.OPEN) {
+              connect();
+            }
+          }, 5000);
+        }
       };
 
       ws.current.onerror = (error) => {
