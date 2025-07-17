@@ -91,7 +91,7 @@ export function MainContent({
               </span>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Export Options */}
             <div className="flex items-center space-x-1 sm:space-x-2">
@@ -116,7 +116,7 @@ export function MainContent({
                 <span className="hidden sm:inline">Create Gist</span>
               </Button>
             </div>
-            
+
             {/* User Profile */}
             <UserProfile />
           </div>
@@ -156,23 +156,29 @@ export function MainContent({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <div className="mb-6">
-                  <motion.h2 
-                    className="text-2xl font-bold mb-2"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                  >
-                    Generated Variations
-                  </motion.h2>
-                  <motion.p 
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+                  className="mb-6"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse-orange">
+                      Generated Variations
+                    </h2>
+                    {/* Optional: Add a subtle shimmer effect */}
+                  </div>
+
+                  {/* Description or additional info */}
+                  <motion.p
                     className="text-muted-foreground"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 }}
+                    transition={{ delay: 0.3 }}
                   >
-                    Five unique interpretations of your prompt
+                    Explore five unique interpretations of your prompt.
                   </motion.p>
-                </div>
+                </motion.div>
 
                 {/* Regular variations grid (first 4) */}
                 {variations.length > 0 && (
@@ -224,7 +230,7 @@ export function MainContent({
             onFork={() => console.log('Fork variation')}
           />
         )}
-        
+
         {/* Mobile Code Editor Modal */}
         {isMobile && showCodeEditor && selectedVariation && (
           <motion.div
@@ -281,7 +287,7 @@ export function MainContent({
             <Plus className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
           </Button>
         </motion.div>
-        
+
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Button
             size="sm"
@@ -291,7 +297,7 @@ export function MainContent({
             <History className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </motion.div>
-        
+
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
           <Button
             size="sm"

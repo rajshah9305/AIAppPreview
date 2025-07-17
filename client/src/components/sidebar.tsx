@@ -113,7 +113,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true,
               <p className="text-xs text-muted-foreground">AI Code Generation</p>
             </div>
           </div>
-          
+
           {/* Mobile close button */}
           {isMobile && (
             <Button
@@ -160,7 +160,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true,
       >
         <div className="space-y-3">
           <label className="text-sm font-medium block">Describe Your Component</label>
-          
+
           {/* Quick Examples */}
           <div className="flex flex-wrap gap-2 mb-3">
             {promptExamples.map((example, index) => (
@@ -232,7 +232,7 @@ export function Sidebar({ onGenerate, isGenerating, onRefineChat, isOpen = true,
                 />
                 <span>Generating Variations...</span>
               </div>
-              
+
               {/* Progress bars would be mapped from actual generation progress */}
               {[1, 2, 3, 4, 5].map((index) => (
                 <motion.div 

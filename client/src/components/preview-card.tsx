@@ -91,17 +91,15 @@ export function PreviewCard({
 
   return (
     <motion.div
-      variants={cardVariants}
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      className={`preview-card glass-panel rounded-xl p-4 group cursor-pointer transition-all duration-500 ${
-        isSelected ? 'ring-2 ring-primary' : ''
+      className={`preview-card morphing-card p-6 rounded-xl shimmer relative overflow-hidden cursor-pointer ${
+        isSelected ? 'ring-2 ring-primary neon-glow' : ''
       }`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{ transformStyle: 'preserve-3d' }}
+      whileHover={{ scale: 1.02, y: -4 }}
+      whileTap={{ scale: 0.98 }}
     >
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center space-x-2">
@@ -154,7 +152,7 @@ export function PreviewCard({
           </Button>
         </div>
       </div>
-      
+
       {/* Preview iframe placeholder */}
       <motion.div 
         className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg border border-white/10 relative overflow-hidden group-hover:border-primary/50 transition-colors"
@@ -184,14 +182,14 @@ export function PreviewCard({
             )}
           </div>
         )}
-        
+
         <div className="absolute bottom-3 left-3 flex items-center space-x-2">
           <Badge variant="secondary" className="text-xs bg-black/50">
             Live Preview
           </Badge>
           {getStatusBadge()}
         </div>
-        
+
         {variation.status === 'generating' && variation.progress !== undefined && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
             <motion.div 
@@ -203,7 +201,7 @@ export function PreviewCard({
           </div>
         )}
       </motion.div>
-      
+
       <div className="mt-3 flex items-center justify-between">
         <div className="text-xs text-muted-foreground">
           <span>{variation.size}</span> • <span>{variation.lines} lines</span>

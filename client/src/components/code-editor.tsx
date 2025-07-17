@@ -33,7 +33,7 @@ export function CodeEditor({
 
   const handleCopy = async () => {
     if (!variation?.code) return;
-    
+
     try {
       await navigator.clipboard.writeText(variation.code);
       setCopied(true);
@@ -45,7 +45,7 @@ export function CodeEditor({
 
   const handleDownload = () => {
     if (!variation?.code) return;
-    
+
     const blob = new Blob([variation.code], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -159,7 +159,7 @@ export function CodeEditor({
                     </motion.div>
                   </div>
                 )}
-                
+
                 {variation.status === 'generating' && (
                   <motion.div
                     className="inline-block w-2 h-4 bg-primary ml-1"
@@ -195,7 +195,7 @@ export function CodeEditor({
           <Play className="h-4 w-4 mr-2" />
           Run in Playground
         </Button>
-        
+
         <div className="flex space-x-2">
           <Button
             onClick={onCompare}
